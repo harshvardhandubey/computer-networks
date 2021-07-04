@@ -1,22 +1,24 @@
 import java.net.*;
 import java.io.*;
-class Client extends Thread
+class Server extends Thread
 {
 Socket s;
+ServerSocket ss;
 BufferedReader br;
 PrintWriter pw;
-Client()
+Server()
 {
 try
 {
 
-s=new Socket(InetAddress.getLocalHost(),1200);
+ss=new ServerSocket(1200);
+s=ss.accept();
 
-br=new BufferedReader(new InputStreamReader(System.in));
-pw=new PrintWriter(s.getOutputStream(),true);
+br=new BufferedReader(new InputStreamReader(s.getInputStream()));
 start();
-ClientInner ci=new ClientInner();
+ServerInner ci=new ServerInner();
 }
+
 catch(Exception e)
 {
 }
@@ -29,28 +31,28 @@ try
 while(true)
 {
 String s1=br.readLine();
-pw.println(s1);
-
-sleep(10000);
+System.out.println(&quot;Message from client:&quot;+s1);
 }
 }
 
 catch(Exception e)
 {}
 }
-class ClientInner
+class ServerInner
 {
 BufferedReader br1;
 PrintWriter pw;
-ClientInner()
+ServerInner()
 {
 try
 {
-br1=new BufferedReader(new InputStreamReader(s.getInputStream()));
+br1=new BufferedReader(new InputStreamReader(System.in));
+pw=new PrintWriter(s.getOutputStream(),true);
 
 start();
 }
 catch(Exception e)
+
 {
 }
 }
@@ -61,10 +63,9 @@ try
 while(true)
 {
 String P=br1.readLine();
-System.out.println(&quot;message is:&quot;+P);
+pw.println(P);
 
 }
-
 }
 catch(Exception e)
 {
@@ -73,6 +74,6 @@ catch(Exception e)
 }
 public static void main(String args[])
 {
-Client c=new Client();
+Server s=new Server();
 }
 }
